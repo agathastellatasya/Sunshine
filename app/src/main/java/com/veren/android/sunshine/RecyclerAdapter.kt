@@ -26,14 +26,16 @@ class RecyclerAdapter(val context: Context, val list: ArrayList<MainActivity.Wea
 
     override fun onBindViewHolder(holder: CustomViewHolder?, position: Int) {
         holder?.day!!.text = list.get(position).day
-        holder?.desc.text = list.get(position).description
-        holder?.temp.text = list.get(position).min.toString() + " - " + list.get(position).max.toString()
+        holder.desc.text = list.get(position).description
+        holder.high.text = String.format(context.getString(R.string.format_temperature),(list.get(position).max))
+        holder.low.text = String.format(context.getString(R.string.format_temperature),(list.get(position).min))
     }
 
 }
 
 class CustomViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-    val day = view.day_view
-    val desc = view.desc_view
-    val temp = view.temp_view
+    val day = view.date
+    val desc = view.weather_description
+    val high = view.high_temperature
+    val low = view.low_temperature
 }

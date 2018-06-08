@@ -1,5 +1,9 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Sunshine</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
+
+    <string name="format_temperature">
+        <xliff:g id="temp">%1.0f</xliff:g>\u00B0
+    </string>
 </resources>

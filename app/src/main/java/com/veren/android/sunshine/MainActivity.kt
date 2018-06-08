@@ -20,7 +20,7 @@ var list : ArrayList<MainActivity.Weather> = ArrayList()
 
 class MainActivity : AppCompatActivity() {
 
-    data class Weather(val day: String, val description: String, val max: Long, val min: Long)
+    data class Weather(val day: String, val description: String, val max: Double, val min: Double)
     val TAG = "MainActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,8 +87,8 @@ class MainActivity : AppCompatActivity() {
             val description = weatherObject.getString("description")
 
             val temperatureObject = dayForcast.getJSONObject("temp")
-            val high = Math.round(temperatureObject.getDouble("max"))
-            val low = Math.round(temperatureObject.getDouble("min"))
+            val high = temperatureObject.getDouble("max")
+            val low = temperatureObject.getDouble("min")
 
             Log.d(TAG,"high: "+ high.toString())
             list.add(Weather(date, description, high, low))
