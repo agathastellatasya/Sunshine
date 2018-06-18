@@ -1,5 +1,7 @@
 package com.veren.android.sunshine
 
+import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +14,8 @@ import java.time.temporal.TemporalQueries.localDate
 import java.util.*
 import android.text.format.DateUtils.HOUR_IN_MILLIS
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.collections.ArrayList
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,18 +26,47 @@ class MainActivity : AppCompatActivity() {
 
     data class Weather(val day: String, val description: String, val max: Double, val min: Double)
     val TAG = "MainActivity"
+    val url = "https://andfun-weather.udacity.com/staticweather"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val url = "https://andfun-weather.udacity.com/staticweather"
-
         AsyncTaskHandleJson().execute(url)
+    }
 
-        //recyclerView.adapter = RecyclerAdapter(this, list)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        when (item!!.itemId) {
+            R.id.refresh -> {
+                AsyncTaskHandleJson().execute(url)
+            }
+            R.id.map_location -> {
+                val address = "Jakarta"
+                val geoLocation = Uri.parse("geo:0,0?q=" + address)
+
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.setData(geoLocation)
+
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent)
+                } else {
+                    Log.d(TAG, "Couldn't call " + geoLocation.toString() + ", no receiving apps installed!");
+                }
+            }
+            R.id.settings -> {
+                startActivity(Intent())
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     fun runAdapter() {
