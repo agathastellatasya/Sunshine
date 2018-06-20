@@ -6,4 +6,8 @@
     <string name="format_temperature">
         <xliff:g id="temp">%1.0f</xliff:g>\u00B0
     </string>
+    <string name="pref_key_location" translatable="false">loc</string>
+    <string name="pref_key_units" translatable="false">units</string>
+    <string name="pref_def_location" translatable="false">Jakarta</string>
+    <string name="pref_def_units" translatable="false">celcius</string>
 </resources>

@@ -1,42 +1,66 @@
 package com.veren.android.sunshine
 
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.net.Uri
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
-import android.text.format.DateUtils.DAY_IN_MILLIS
+import android.support.v7.widget.RecyclerView
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
-import java.time.temporal.TemporalQueries.localDate
-import java.util.*
-import android.text.format.DateUtils.HOUR_IN_MILLIS
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.collections.ArrayList
-import kotlinx.android.synthetic.main.activity_main.*
 
 var list : ArrayList<MainActivity.Weather> = ArrayList()
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
 
     data class Weather(val day: String, val description: String, val max: Double, val min: Double)
     val TAG = "MainActivity"
     val url = "https://andfun-weather.udacity.com/staticweather"
+
+    private var PREFERENCES_HAVE_BEEN_UPDATED = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this)
+
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         AsyncTaskHandleJson().execute(url)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if (PREFERENCES_HAVE_BEEN_UPDATED) {
+            Log.d(TAG, "onStart: preferences were updated");
+            list.clear()
+            AsyncTaskHandleJson().execute(url)
+            PREFERENCES_HAVE_BEEN_UPDATED = false;
+        }
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        PREFERENCES_HAVE_BEEN_UPDATED = true
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -47,10 +71,17 @@ class MainActivity : AppCompatActivity() {
 
         when (item!!.itemId) {
             R.id.refresh -> {
+                list.clear()
                 AsyncTaskHandleJson().execute(url)
+                return true
             }
             R.id.map_location -> {
-                val address = "Jakarta"
+                val prefs = PreferenceManager
+                        .getDefaultSharedPreferences(this)
+                val keyForLocation = this.getString(R.string.pref_key_location)
+                val defaultLocation = this.getString(R.string.pref_def_location)
+
+                val address = prefs.getString(keyForLocation, defaultLocation);
                 val geoLocation = Uri.parse("geo:0,0?q=" + address)
 
                 val intent = Intent(Intent.ACTION_VIEW)
@@ -61,9 +92,11 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     Log.d(TAG, "Couldn't call " + geoLocation.toString() + ", no receiving apps installed!");
                 }
+                return true
             }
             R.id.settings -> {
-                startActivity(Intent())
+                startActivity(Intent(this, SettingsActivity::class.java))
+                return true
             }
         }
         return super.onOptionsItemSelected(item)
@@ -106,14 +139,13 @@ class MainActivity : AppCompatActivity() {
 
         val weatherArray = jsonObject.getJSONArray("list")
 
-        val sunshineDateUtils = SunshineDateUtils()
+        val sunshineDateUtils = SunshineUtils()
         val localDate: Long = System.currentTimeMillis()
         val utcDate: Long = sunshineDateUtils.getUTCDateFromLocal(localDate)
-        val startDay: Long = sunshineDateUtils.normalizeDate(utcDate)
 
         for (i in 0..weatherArray.length()-1) {
             val dayForcast = weatherArray.getJSONObject(i)
-            val dateTimeMillis = startDay + sunshineDateUtils.DAY_IN_MILLIS * i
+            val dateTimeMillis = utcDate + sunshineDateUtils.DAY_IN_MILLIS * i
             val date = sunshineDateUtils.getFriendlyDateString(this, dateTimeMillis, false)
 
             val weatherObject = dayForcast.getJSONArray("weather").getJSONObject(0)
@@ -126,7 +158,5 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG,"high: "+ high.toString())
             list.add(Weather(date, description, high, low))
         }
-
-
     }
 }

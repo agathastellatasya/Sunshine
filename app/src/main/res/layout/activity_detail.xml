@@ -35,7 +35,7 @@
         tools:text="Rainy"/>
 
     <TextView
-        android:id="@+id/high_temperature_detail"
+        android:id="@+id/high_detail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/forecast_temperature_space"
@@ -44,12 +44,12 @@
         android:textColor="@color/primary_text"
         android:textSize="@dimen/forecast_text_size"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintRight_toLeftOf="@+id/low_temperature_detail"
+        app:layout_constraintRight_toLeftOf="@+id/low_detail"
         app:layout_constraintTop_toTopOf="@+id/guideline"
         tools:text="19\u00b0"/>
 
     <TextView
-        android:id="@+id/low_temperature_detail"
+        android:id="@+id/low_detail"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
