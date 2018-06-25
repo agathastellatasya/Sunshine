@@ -5,19 +5,17 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.net.Uri
 import android.os.AsyncTask
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.collections.ArrayList
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 
 var list : ArrayList<MainActivity.Weather> = ArrayList()
 
@@ -108,21 +106,14 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
 
     inner class AsyncTaskHandleJson : AsyncTask<String, Void, String>() {
         override fun doInBackground(vararg params: String?): String {
-            Log.d(TAG, "masuk doInBackground")
             var text : String
             var conn = URL(params[0]).openConnection() as HttpURLConnection
             try {
-                Log.d(TAG, "before connect")
                 conn.connect()
-                Log.d(TAG, "after connect")
                 text = conn.inputStream.use { it.reader().use { reader -> reader.readText() } }
-                Log.d(TAG,"text connection: "+ text)
             } finally {
-                Log.d(TAG, "before disconnect")
                 conn.disconnect()
-                Log.d(TAG, "after disconnect")
             }
-            Log.d(TAG, "after try")
             handleJson(text)
             return text
         }
@@ -133,7 +124,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun handleJson(jsonStr: String?) {
+    fun handleJson(jsonStr: String?) {
         Log.d(TAG, "masuk handleJson")
         val jsonObject = JSONObject(jsonStr)
 

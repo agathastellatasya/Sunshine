@@ -1,11 +1,11 @@
 package com.veren.android.sunshine
 
 import android.content.Context
+import android.support.v7.preference.PreferenceManager
 import android.text.format.DateUtils
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
-import android.content.SharedPreferences
-import android.support.v7.preference.PreferenceManager
 
 
 /**
@@ -155,7 +155,7 @@ class SunshineUtils {
         val dayNumber = getDayNumber(dateInMillis)
         val currentDayNumber = getDayNumber(System.currentTimeMillis())
         if (dayNumber == currentDayNumber) {
-            return context.getString(R.string.today)
+            return "Today"
         } else if (dayNumber == currentDayNumber + 1) {
             return context.getString(R.string.tomorrow)
         } else {
@@ -175,8 +175,7 @@ class SunshineUtils {
      *
      * @return Temperature in degrees Fahrenheit (°F)
      */
-    private fun celsiusToFahrenheit(temperatureInCelsius: Double): Double {
-        val temperatureInFahrenheit = temperatureInCelsius * 1.8 + 32
+    fun celsiusToFahrenheit(temperatureInCelsius: Double): Double {
         return temperatureInCelsius * 1.8 + 32
     }
 

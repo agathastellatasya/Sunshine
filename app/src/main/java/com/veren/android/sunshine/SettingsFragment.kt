@@ -6,7 +6,6 @@ import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.ListPreference
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
-import java.io.File
 
 /**
  * Created by Veren on 6/19/2018.
@@ -34,7 +33,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         val prefScreen = preferenceScreen
         val count = prefScreen.preferenceCount
 
-        for (i in 0..count-1) {
+        for (i in 0..count - 1) {
             val p = prefScreen.getPreference(i)
             if (p !is CheckBoxPreference) {
                 val value = sharedPreferences.getString(p.key, "")
@@ -57,7 +56,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         val preference = findPreference(key)
         if (null != preference) {
             if (preference !is CheckBoxPreference) {
-                setPreferenceSummary(preference, sharedPreferences!!.getString(key,""))
+                setPreferenceSummary(preference, sharedPreferences!!.getString(key, ""))
             }
         }
     }
